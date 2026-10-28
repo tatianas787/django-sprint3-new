@@ -1,10 +1,8 @@
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 
-
-from .models import Post, Category
-
-POSTS_ON_MAIN_PAGE = 5
+from .models import Category, Post
+from .constants import POSTS_ON_MAIN_PAGE
 
 
 def index(request):
