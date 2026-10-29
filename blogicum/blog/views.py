@@ -6,47 +6,39 @@ from .constants import POSTS_ON_MAIN_PAGE
 
 
 def index(request):
-    template = 'blog/index.html'
     current_time = timezone.now()
-    post_list = Post.objects.filter(
+    posts = Post.published.filter(
         pub_date__lte=current_time,
-        is_published=True,
         category__is_published=True
     )[:POSTS_ON_MAIN_PAGE]
 
-    context = {'post_list': post_list}
-    return render(request, template, context)
+    return render(request, 'blog/index.html', {'post_list': posts})
 
 
-def post_detail(request, id):
-    template = 'blog/detail.html'
+def post_detail(request, post_id):
     post = get_object_or_404(
-        Post,
-        id=id,
-        is_published=True,
+        Post.published,
+        id=post_id,
         pub_date__lte=timezone.now(),
         category__is_published=True
     )
 
-    context = {'post': post}
-    return render(request, template, context)
+    return render(request, 'blog/detail.html', {'post': post})
 
 
 def category_posts(request, category_slug):
-    template = 'blog/category.html'
     category = get_object_or_404(
         Category,
         slug=category_slug,
         is_published=True
     )
-    post_list = Post.objects.filter(
-        category=category,
+    posts = category.posts.filter(
         is_published=True,
         pub_date__lte=timezone.now()
     )
 
-    context = {
-        'category': category,
-        'post_list': post_list,
-    }
-    return render(request, template, context)
+    return render(
+        request,
+        'blog/category.html',
+        {'category': category, 'posts': posts}
+    )

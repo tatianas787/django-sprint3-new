@@ -3,10 +3,15 @@ from django.db import models
 from django.db.models import CASCADE, SET_NULL
 
 from core.models import PublishedModel
-from .constants import TITLE_MAX_LENGTH
+from .constants import CATEGORY_STR_LENGTH, POST_STR_LENGTH, TITLE_MAX_LENGTH
 
 
 User = get_user_model()
+
+
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_published=True)
 
 
 class Category(PublishedModel):
@@ -27,7 +32,7 @@ class Category(PublishedModel):
         verbose_name_plural = 'Категории'
 
     def __str__(self):
-        return self.title
+        return self.title[:CATEGORY_STR_LENGTH]
 
 
 class Location(PublishedModel):
@@ -41,7 +46,7 @@ class Location(PublishedModel):
         verbose_name_plural = 'Местоположения'
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Post(PublishedModel):
@@ -76,10 +81,13 @@ class Post(PublishedModel):
         verbose_name='Категория'
     )
 
+    objects = models.Manager()
+    published = PublishedManager()
+
     class Meta(PublishedModel.Meta):
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
         ordering = ('-pub_date',)
 
     def __str__(self):
-        return self.title
+        return self.title[:POST_STR_LENGTH]
