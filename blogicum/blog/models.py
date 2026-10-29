@@ -2,16 +2,12 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import CASCADE, SET_NULL
 
+from blog.managers import PublishedManager
 from core.models import PublishedModel
 from .constants import CATEGORY_STR_LENGTH, POST_STR_LENGTH, TITLE_MAX_LENGTH
 
 
 User = get_user_model()
-
-
-class PublishedManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(is_published=True)
 
 
 class Category(PublishedModel):
